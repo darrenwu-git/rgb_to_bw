@@ -28,6 +28,7 @@ int main()
 	FILE *fp=NULL;
 	uint32_t *bitmap;
 	size_t sz;
+	int ret;
 
 	//read rgba
 	fp = fopen(RGBA_FILE, "r");
@@ -39,6 +40,7 @@ int main()
 
 	fseek(fp, 0L, SEEK_END);
 	sz = ftell(fp);
+	fseek(fp, 0L, SEEK_SET);
 
 	bitmap = malloc(sz);
 	if(bitmap == NULL)
@@ -47,12 +49,17 @@ int main()
 		return -1;
 	}
 
-	fread(bitmap, sz, 1, fp);
+	ret = fread(bitmap, sizeof(uint32_t), sz/sizeof(uint32_t), fp);
+	if(ret < 0)
+	{
+		perror("fread fail\n");
+		return -1;
+	}
 
 	fclose(fp);
 
 	//convert to BW
-	rgba_to_bw(bitmap, 800, 500,0);
+	rgba_to_bw(bitmap+512, 800, 500,4);
 
 	//write back
 	fp = fopen(BW_FILE, "w+");
@@ -65,6 +72,8 @@ int main()
 	fwrite(bitmap, sz, 1, fp);
 
 	fclose(fp);
+
+	free(bitmap);
 
 	return 0;
 }

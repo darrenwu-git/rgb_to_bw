@@ -1,6 +1,6 @@
 
 BIN = rgb_to_bw
-CFLAGS = -Wall -Werror 
+CFLAGS = -Wall -Werror -g
 .PHONY: clean
 
 all: $(BIN)
